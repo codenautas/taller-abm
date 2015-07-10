@@ -59,12 +59,13 @@ var actualConfig;
 
 var clientDb;
 
+pg.easy = true;
+
 Promises.start(function(){
     return readYaml('global-config.yaml',{encoding: 'utf8'});
 }).then(function(globalConfig){
     actualConfig=globalConfig;
     return readYaml('local-config.yaml',{encoding: 'utf8'}).catch(function(err){
-        console.log('local-config.yaml err',err);
         if(err.code!=='ENOENT') throw err;
         return {};
     }).then(function(localConfig){
@@ -97,9 +98,21 @@ Promises.start(function(){
     ));
     */
 }).then(function(){
-    
+    app.use('/ejemplo/suma',function(req,res){
+        console.log('entre');
+        // probar con localhost:12348/ejemplo/suma?alfa=3&beta=7
+        clientDb.query('select $1::integer + $2::integer as suma',[req.query.alfa||1,req.query.beta||10]).then(function(result){
+            console.log('result',result);
+            res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
+        }).catch(function(err){
+            console.log('err ejemplo/suma',err);
+            throw err;
+        }).catch(serveErr);
+    });
 }).catch(function(err){
     console.log('ERROR',err);
     console.log('STACK',err.stack);
     console.log('las partes que dependen de la base de datos no fueron instaladas en su totalidad');
+    console.log('***************');
+    console.log('REVISE QUE EXISTA LA DB');
 });

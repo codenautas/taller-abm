@@ -1,0 +1,8 @@
+server:
+  port: 12348
+db:
+  host: localhost
+  database: example_db
+  port: 5432
+  user: example_user
+  password: example3092929

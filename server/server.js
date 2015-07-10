@@ -12,7 +12,7 @@ var path = require('path');
 var pg = require('pg-promise-strict');
 var readYaml = require('read-yaml-promise');
 var extensionServeStatic = require('extension-serve-static');
-// var jade = require('jade');
+var jade = require('jade');
 // var passport = require('passport');
 // var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 // var LocalStrategy = require('passport-local').Strategy;
@@ -20,6 +20,30 @@ var extensionServeStatic = require('extension-serve-static');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
+
+function serveJade(pathToFile,anyFile){
+    return function(req,res,next){
+        if(path.extname(req.path)){
+            console.log('req.path',req.path);
+            return next();
+        }
+        Promise.resolve().then(function(){
+            var fileName=pathToFile+(anyFile?req.path+'.jade':'');
+            return fs.readFile(fileName, {encoding: 'utf8'})
+        }).catch(function(err){
+            if(anyFile && err.code==='ENOENT'){
+                throw new Error('next');
+            }
+            throw err;
+        }).then(function(fileContent){
+            var htmlText=jade.render(fileContent);
+            serveHtmlText(htmlText)(req,res);
+        }).catch(serveErr(req,res,next));
+    }
+}
+
+// probar con http://localhost:12348/ajax-example
+app.use('/',serveJade('client',true));
 
 function serveHtmlText(htmlText){
     return function(req,res){
@@ -29,8 +53,11 @@ function serveHtmlText(htmlText){
     }
 }
 
-function serveErr(req,res){
+function serveErr(req,res,next){
     return function(err){
+        if(err.message=='next'){
+            return next();
+        }
         console.log('ERROR', err);
         console.log('STACK', err.stack);
         var text='ERROR! '+(err.code||'')+'\n'+err.message+'\n------------------\n'+err.stack;
@@ -99,11 +126,18 @@ Promises.start(function(){
     */
 }).then(function(){
     app.use('/ejemplo/suma',function(req,res){
-        console.log('entre');
+        if(req.method==='POST'){
+            var params=req.body;
+        }else{
+            var params=req.query;
+        }
         // probar con localhost:12348/ejemplo/suma?alfa=3&beta=7
-        clientDb.query('select $1::integer + $2::integer as suma',[req.query.alfa||1,req.query.beta||10]).then(function(result){
-            console.log('result',result);
-            res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
+        clientDb.query('select $1::integer + $2::integer as suma',[params.alfa||1,params.beta||10]).then(function(result){
+            if(req.method==='POST'){
+                res.send(''+result.rows[0].suma);
+            }else{
+                res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
+            }
         }).catch(function(err){
             console.log('err ejemplo/suma',err);
             throw err;

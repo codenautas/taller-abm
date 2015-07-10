@@ -1,3 +1,5 @@
+server:
+  port: 12348
 db:
   host: localhost
   database: tallerabm_db

@@ -6,7 +6,7 @@ var app = express();
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var Promise = require('best-promise');
+var Promises = require('best-promise');
 var fs = require('fs-promise');
 var path = require('path');
 var pg = require('pg-promise-strict');
@@ -20,7 +20,6 @@ var extensionServeStatic = require('extension-serve-static');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
-
 
 function serveHtmlText(htmlText){
     return function(req,res){
@@ -56,10 +55,24 @@ app.use('/',extensionServeStatic('./client', {
     staticExtensions:validExts
 }))
 
-readYaml('local-config.yaml',{encoding: 'utf8'}).then(function(localConfig){
-    actualConfig=localConfig;
+var actualConfig;
+
+var clientDb;
+
+Promises.start(function(){
+    return readYaml('global-config.yaml',{encoding: 'utf8'});
+}).then(function(globalConfig){
+    actualConfig=globalConfig;
+    return readYaml('local-config.yaml',{encoding: 'utf8'}).catch(function(err){
+        console.log('local-config.yaml err',err);
+        if(err.code!=='ENOENT') throw err;
+        return {};
+    }).then(function(localConfig){
+        _.merge(actualConfig,localConfig);
+    });
+}).then(function(){
     return new Promise(function(resolve, reject){
-        var server=app.listen(localConfig.server.port, function(event) {
+        var server=app.listen(actualConfig.server.port, function(event) {
             console.log('Listening on port %d', server.address().port);
             resolve();
         });
@@ -68,6 +81,8 @@ readYaml('local-config.yaml',{encoding: 'utf8'}).then(function(localConfig){
     return pg.connect(actualConfig.db);
 }).then(function(client){
     console.log("CONECTED TO", actualConfig.db.database);
+    clientDb=client;
+    /*
     passport.use(new LocalStrategy(
         function(username, password, done) {
             console.log("TRYING TO CONNECT",username, password);
@@ -80,6 +95,9 @@ readYaml('local-config.yaml',{encoding: 'utf8'}).then(function(localConfig){
                 }).catch(logAndThrow).catch(done);
         }
     ));
+    */
+}).then(function(){
+    
 }).catch(function(err){
     console.log('ERROR',err);
     console.log('STACK',err.stack);

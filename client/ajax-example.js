@@ -62,4 +62,23 @@ window.addEventListener('load',function(){
             eid('status').textContent=''+error;
         });
     }
+    eid('traer').onclick=function(){
+        AjaxBestPromise.get({
+            url:'/persona/load',
+            data:{dni:eid('dni').value},
+        }).then(function(resultado){
+            var persona=JSON.parse(resultado);
+            var tabla=document.createElement('table');
+            eid('datos_persona').appendChild(tabla);
+            for(var campo in persona){
+                var row=tabla.insertRow(-1);
+                var cell=row.insertCell(-1);
+                cell.textContent=campo;
+                var cell=row.insertCell(-1);
+                cell.textContent=persona[campo];
+            }
+        }).catch(function(error){
+            eid('status').textContent=''+error;
+        });
+    }
 });

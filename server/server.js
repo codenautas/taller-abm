@@ -86,8 +86,6 @@ var actualConfig;
 
 var clientDb;
 
-pg.easy = true;
-
 Promises.start(function(){
     return readYaml('global-config.yaml',{encoding: 'utf8'});
 }).then(function(globalConfig){
@@ -132,7 +130,7 @@ Promises.start(function(){
             var params=req.query;
         }
         // probar con localhost:12348/ejemplo/suma?alfa=3&beta=7
-        clientDb.query('select $1::integer + $2::integer as suma',[params.alfa||1,params.beta||10]).then(function(result){
+        clientDb.query('select $1::integer + $2::integer as suma',[params.alfa||1,params.beta||10]).fetchUniqueRow().then(function(result){
             if(req.method==='POST'){
                 res.send(''+result.rows[0].suma);
             }else{
@@ -143,19 +141,11 @@ Promises.start(function(){
             throw err;
         }).catch(serveErr);
     });
-    app.use('/ejemplo/load',function(req,res){
-        if(req.method==='POST'){
-            var params=req.body;
-        }else{
-            var params=req.query;
-        }
+    app.get('/persona/load',function(req,res){
+        var params=req.query;
         // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
-        clientDb.query('select nombre from reqper.personas where dni = $1',[params.dni]).then(function(result){
-            if(req.method==='POST'){
-                res.send(''+result.rows[0].nombre);
-            }else{
-                res.send('<h1>el nombre es '+result.rows[0].nombre+'<h1>');
-            }
+        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
         }).catch(function(err){
             console.log('err ejemplo/load',err);
             throw err;

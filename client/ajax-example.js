@@ -63,6 +63,7 @@ window.addEventListener('load',function(){
         });
     }
     eid('traer').onclick=function(){
+        eid('traer').disabled = true;
         AjaxBestPromise.get({
             url:'/persona/load',
             data:{dni:eid('dni').value},
@@ -77,6 +78,8 @@ window.addEventListener('load',function(){
                 var cell=row.insertCell(-1);
                 cell.textContent=persona[campo];
             }
+        }).then( function(){
+            eid('traer').disabled = false;        
         }).catch(function(error){
             eid('status').textContent=''+error;
         });

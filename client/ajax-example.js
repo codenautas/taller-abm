@@ -63,20 +63,24 @@ window.addEventListener('load',function(){
         });
     }
     eid('traer').onclick=function(){
-        eid('traer').disabled = true;
+        this.disabled = true;
         AjaxBestPromise.get({
             url:'/persona/load',
             data:{dni:eid('dni').value},
         }).then(function(resultado){
-            var persona=JSON.parse(resultado);
-            var tabla=document.createElement('table');
-            eid('datos_persona').appendChild(tabla);
-            for(var campo in persona){
-                var row=tabla.insertRow(-1);
-                var cell=row.insertCell(-1);
-                cell.textContent=campo;
-                var cell=row.insertCell(-1);
-                cell.textContent=persona[campo];
+            if(!resultado){
+                alert('No existe DNI');
+            }else{
+                var persona=JSON.parse(resultado);
+                var tabla=document.createElement('table');
+                eid('datos_persona').appendChild(tabla);
+                for(var campo in persona){
+                    var row=tabla.insertRow(-1);
+                    var cell=row.insertCell(-1);
+                    cell.textContent=campo;
+                    var cell=row.insertCell(-1);
+                    cell.textContent=persona[campo];
+                }
             }
         }).then( function(){
             eid('traer').disabled = false;        
@@ -84,4 +88,108 @@ window.addEventListener('load',function(){
             eid('status').textContent=''+error;
         });
     }
+    eid('siguiente').onclick=function(){
+        this.disabled = true;
+        AjaxBestPromise.get({
+            url:'/persona/siguiente',
+            data:{dni:eid('dni').value},
+        }).then(function(resultado){
+            if(!resultado){
+                alert('No hay mas registros');
+            }else{
+                var persona=JSON.parse(resultado);
+                var tabla=document.createElement('table');
+                eid('datos_persona').appendChild(tabla);
+                for(var campo in persona){
+                    var row=tabla.insertRow(-1);
+                    var cell=row.insertCell(-1);
+                    cell.textContent=campo;
+                    var cell=row.insertCell(-1);
+                    cell.textContent=persona[campo];
+                }
+            }
+        }).then( function(){
+            eid('siguiente').disabled = false;        
+        }).catch(function(error){
+            eid('status').textContent=''+error;
+        });
+    }
+    eid('anterior').onclick=function(){
+        this.disabled = true;
+        AjaxBestPromise.get({
+            url:'/persona/anterior',
+            data:{dni:eid('dni').value},
+        }).then(function(resultado){
+            if(!resultado){
+                alert('No hay mas registros');
+            }else{
+                var persona=JSON.parse(resultado);
+                var tabla=document.createElement('table');
+                eid('datos_persona').appendChild(tabla);
+                for(var campo in persona){
+                    var row=tabla.insertRow(-1);
+                    var cell=row.insertCell(-1);
+                    cell.textContent=campo;
+                    var cell=row.insertCell(-1);
+                    cell.textContent=persona[campo];
+                }
+            }
+        }).then( function(){
+            eid('anterior').disabled = false;        
+        }).catch(function(error){
+            eid('status').textContent=''+error;
+        });
+    }    
+    eid('primero').onclick=function(){
+        this.disabled = true;
+        AjaxBestPromise.get({
+            url:'/persona/primero',
+            data:{dni:eid('dni').value},
+        }).then(function(resultado){
+            if(!resultado){
+                alert('No hay registros');
+            }else{
+                var persona=JSON.parse(resultado);
+                var tabla=document.createElement('table');
+                eid('datos_persona').appendChild(tabla);
+                for(var campo in persona){
+                    var row=tabla.insertRow(-1);
+                    var cell=row.insertCell(-1);
+                    cell.textContent=campo;
+                    var cell=row.insertCell(-1);
+                    cell.textContent=persona[campo];
+                }
+            }
+        }).then( function(){
+            eid('primero').disabled = false;        
+        }).catch(function(error){
+            eid('status').textContent=''+error;
+        });
+    }
+    eid('ultimo').onclick=function(){
+        this.disabled = true;
+        AjaxBestPromise.get({
+            url:'/persona/ultimo',
+            data:{dni:eid('dni').value},
+        }).then(function(resultado){
+            if(!resultado){
+                alert('No hay registros');
+            }else{
+                var persona=JSON.parse(resultado);
+                var tabla=document.createElement('table');
+                eid('datos_persona').appendChild(tabla);
+                for(var campo in persona){
+                    var row=tabla.insertRow(-1);
+                    var cell=row.insertCell(-1);
+                    cell.textContent=campo;
+                    var cell=row.insertCell(-1);
+                    cell.textContent=persona[campo];
+                }
+            }
+        }).then( function(){
+            eid('ultimo').disabled = false;        
+        }).catch(function(error){
+            eid('status').textContent=''+error;
+        });
+    }   
 });

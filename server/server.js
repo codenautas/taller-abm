@@ -143,7 +143,7 @@ Promises.start(function(){
     });
     app.get('/persona/load',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        // probar con localhost:12348/persona/load?dni=71184210
         clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
@@ -154,8 +154,8 @@ Promises.start(function(){
     });
     app.get('/persona/siguiente',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
-        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+        // probar con localhost:12348/persona/siguiente?dni=71184210
+        clientDb.query('select * from reqper.personas where dni > $1 order by dni limit 1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
             console.log('err ejemplo/siguiente',err);
@@ -165,8 +165,8 @@ Promises.start(function(){
     });    
     app.get('/persona/anterior',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
-        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+        // probar con localhost:12348/persona/anterior?dni=71184210
+        clientDb.query('select * from reqper.personas where dni < $1 order by dni desc limit 1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
             console.log('err ejemplo/anterior',err);
@@ -176,8 +176,8 @@ Promises.start(function(){
     });    
     app.get('/persona/primero',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
-        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+        // probar con localhost:12348/persona/primero
+        clientDb.query('select * from reqper.personas order by dni limit 1',null).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
             console.log('err ejemplo/primero',err);
@@ -187,8 +187,8 @@ Promises.start(function(){
     });    
     app.get('/persona/ultimo',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
-        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+        // probar con localhost:12348/persona/primero
+        clientDb.query('select * from reqper.personas order by dni desc limit 1',null).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
             console.log('err ejemplo/ultimo',err);

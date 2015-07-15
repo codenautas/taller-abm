@@ -191,5 +191,20 @@ window.addEventListener('load',function(){
         }).catch(function(error){
             eid('status').textContent=''+error;
         });
-    }   
+    }
+    eid('grabar').onclick=function(){
+        this.disabled = true;
+        AjaxBestPromise.get({
+            url:'/persona/grabar',
+            data:{dni:eid('dni').value},
+        }).then(function(resultado){
+            if(!resultado){
+                alert('El registro ha sido grabado');
+            }
+        }).then( function(){
+            eid('grabar').disabled = false;        
+        }).catch(function(error){
+            eid('status').textContent=''+error;
+        });
+    }    
 });

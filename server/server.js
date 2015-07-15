@@ -148,9 +148,65 @@ Promises.start(function(){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
             console.log('err ejemplo/load',err);
+            
             throw err;
         }).catch(serveErr);
     });
+    app.get('/persona/siguiente',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err ejemplo/siguiente',err);
+            
+            throw err;
+        }).catch(serveErr);
+    });    
+    app.get('/persona/anterior',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err ejemplo/anterior',err);
+            
+            throw err;
+        }).catch(serveErr);
+    });    
+    app.get('/persona/primero',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err ejemplo/primero',err);
+            
+            throw err;
+        }).catch(serveErr);
+    });    
+    app.get('/persona/ultimo',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err ejemplo/ultimo',err);
+            
+            throw err;
+        }).catch(serveErr);
+    });
+    app.get('/persona/grabar',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err ejemplo/grabar',err);
+            
+            throw err;
+        }).catch(serveErr);
+    });     
 }).catch(function(err){
     console.log('ERROR',err);
     console.log('STACK',err.stack);

@@ -123,6 +123,7 @@ Promises.start(function(){
     ));
     */
 }).then(function(){
+    //ejemplo suma
     app.use('/ejemplo/suma',function(req,res){
         if(req.method==='POST'){
             var params=req.body;
@@ -132,23 +133,25 @@ Promises.start(function(){
         // probar con localhost:12348/ejemplo/suma?alfa=3&beta=7
         clientDb.query('select $1::integer + $2::integer as suma',[params.alfa||1,params.beta||10]).fetchUniqueRow().then(function(result){
             if(req.method==='POST'){
-                res.send(''+result.rows[0].suma);
+                //res.send(''+result.rows[0].suma);
+                res.send(''+result.row.suma);
             }else{
-                res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
+                //res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
+                res.send('<h1>la suma es '+result.row.suma+'<h1>');
             }
         }).catch(function(err){
             console.log('err ejemplo/suma',err);
             throw err;
         }).catch(serveErr);
     });
+	//personas
     app.get('/persona/load',function(req,res){
         var params=req.query;
         // probar con localhost:12348/persona/load?dni=71184210
         clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err ejemplo/load',err);
-            
+            console.log('err persona/load',err);            
             throw err;
         }).catch(serveErr);
     });
@@ -158,8 +161,7 @@ Promises.start(function(){
         clientDb.query('select * from reqper.personas where dni > $1 order by dni limit 1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err ejemplo/siguiente',err);
-            
+            console.log('err persona/siguiente',err);            
             throw err;
         }).catch(serveErr);
     });    
@@ -169,8 +171,7 @@ Promises.start(function(){
         clientDb.query('select * from reqper.personas where dni < $1 order by dni desc limit 1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err ejemplo/anterior',err);
-            
+            console.log('err persona/anterior',err);           
             throw err;
         }).catch(serveErr);
     });    
@@ -180,33 +181,83 @@ Promises.start(function(){
         clientDb.query('select * from reqper.personas order by dni limit 1',null).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err ejemplo/primero',err);
-            
+            console.log('err persona/primero',err);            
             throw err;
         }).catch(serveErr);
     });    
     app.get('/persona/ultimo',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/persona/primero
+        // probar con localhost:12348/persona/ultimo
         clientDb.query('select * from reqper.personas order by dni desc limit 1',null).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err ejemplo/ultimo',err);
-            
+            console.log('err persona/ultimo',err);            
             throw err;
         }).catch(serveErr);
     });
+	/*
     app.get('/persona/grabar',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
+        // probar con localhost:12348/persona/grabar
         clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err ejemplo/grabar',err);
-            
+            console.log('err persona/grabar',err);            
             throw err;
         }).catch(serveErr);
-    });     
+    });
+	*/
+    //requerimientos
+    app.get('/requerimiento/load',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/requerimiento/load?req_proy=NUEVOPROY&req_req=8
+        clientDb.query('select * from reqper.requerimientos where req_proy = $1 and req_req= $2',[params.req_proy,params.req_req]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err requerimiento/load',err);            
+            throw err;
+        }).catch(serveErr);
+    });	
+    app.get('/requerimiento/siguiente',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/requerimiento/siguiente?req_proy=NUEVOPROY&req_req=8
+        clientDb.query('select * from reqper.requerimientos where req_proy > $1 or (req_proy = $1 and comun.para_ordenar_numeros(req_req) > comun.para_ordenar_numeros($2)) order by req_proy, comun.para_ordenar_numeros(req_req) LIMIT 1',[params.req_proy,params.req_req]).fetchOneRowIfExists().then(function(result){
+  			res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err requerimiento/siguiente',err);            
+            throw err;
+        }).catch(serveErr);
+    });
+    app.get('/requerimiento/anterior',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/requerimiento/anterior?req_proy=NUEVOPROY&req_req=8
+        clientDb.query('select * from reqper.requerimientos where req_proy < $1 or (req_proy = $1 and comun.para_ordenar_numeros(req_req) < comun.para_ordenar_numeros($2)) order by (req_proy, comun.para_ordenar_numeros(req_req)) desc LIMIT 1',[params.req_proy,params.req_req]).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err requerimiento/anterior',err);            
+            throw err;
+        }).catch(serveErr);
+    });    
+    app.get('/requerimiento/primero',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/requerimiento/primero
+        clientDb.query('select * from reqper.requerimientos order by req_proy, comun.para_ordenar_numeros(req_req) limit 1',null).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err requerimiento/primero',err);            
+            throw err;
+        }).catch(serveErr);
+    });        
+    app.get('/requerimiento/ultimo',function(req,res){
+        var params=req.query;
+        // probar con localhost:12348/requerimiento/ultimo
+        clientDb.query('select * from reqper.requerimientos order by (req_proy, comun.para_ordenar_numeros(req_req)) desc limit 1',null).fetchOneRowIfExists().then(function(result){
+            res.send(JSON.stringify(result.row));
+        }).catch(function(err){
+            console.log('err requerimiento/ultimo',err);            
+            throw err;
+        }).catch(serveErr);
+    });	
 }).catch(function(err){
     console.log('ERROR',err);
     console.log('STACK',err.stack);

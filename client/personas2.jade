@@ -5,16 +5,23 @@ html(lang="es", ng-app="personasApp")
     title Taller ABMS
     link(rel="stylesheet", type="text/css", href="taller-abm.css")
   body
-    div.menu_superior 
+    div.menu_superior(ng-controller="ErroresCtrl as error")
       img.menu_icon(src="triple-igual.png")
       span Taller ABM
-    div.contenedor(ng-controller="PersonasCtrl as persona")
-      div(ng-show="persona.vacio")
+      span.error_msg {{error.message}} {{error.object}}
+    div.contenedor(ng-controller="PersonasCtrl as personas")
+      div(ng-show="personas.parametros.estado!='ok' && personas.parametros.estado!='loading'")
         label DNI
-        input#dni(value=71184210)
-        button#traer traer
-      div(ng-hide="persona.vacio")
-        div Persona {{persona.dni}}
+        input(ng-model="personas.parametros.dni")
+        button(ng-click="personas.operaciones.traer()") traer
+      div(ng-show="personas.parametros.estado=='error'")
+        div.error_msg {{personas.parametros.mensaje_error}}
+      div(ng-show="personas.parametros.estado=='loading'")
+        div Loading...
+      div(ng-show="personas.parametros.estado=='ok'")
+        div Persona {{personas.datos.dni}}
+        div Nombre: {{personas.datos.nombre}}
     script(src="angular.js")
     script(src="angular-route.js")
+    script(src="ajax-best-promise.js")
     script(src="app.js")

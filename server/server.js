@@ -71,6 +71,10 @@ function serveErr(req,res,next){
 
 var mime = extensionServeStatic.mime;
 
+app.use('/',extensionServeStatic('./node_modules/angular', {staticExtensions:'js'}));
+app.use('/',extensionServeStatic('./node_modules/angular-route', {staticExtensions:'js'}));
+
+
 var validExts=[
     'html',
     'jpg','png','gif',

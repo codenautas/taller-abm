@@ -1,0 +1,20 @@
+doctype html
+html(lang="es", ng-app="personasApp")
+  head
+    meta(charset='utf-8')
+    title Taller ABMS
+    link(rel="stylesheet", type="text/css", href="taller-abm.css")
+  body
+    div.menu_superior 
+      img.menu_icon(src="triple-igual.png")
+      span Taller ABM
+    div.contenedor(ng-controller="PersonasCtrl as persona")
+      div(ng-show="persona.vacio")
+        label DNI
+        input#dni(value=71184210)
+        button#traer traer
+      div(ng-hide="persona.vacio")
+        div Persona {{persona.dni}}
+    script(src="angular.js")
+    script(src="angular-route.js")
+    script(src="app.js")

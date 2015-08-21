@@ -1,0 +1,30 @@
+body{
+    margin:0px;
+    font-family:arial;
+    
+}
+
+.menu_icon{
+    padding:0px;
+    margin:0px;
+    vertical-align:middle;
+}
+
+.menu_superior{
+    background-color:#DDD;
+    margin:0px;
+    border-bottom:1px solid #555;
+}
+
+.menu_superior span{
+    margin:4px;
+    vertical-align:middle;
+}
+
+.contenedor{
+    padding:8px;
+}
+
+.contenedor *{
+    margin:4px;
+}

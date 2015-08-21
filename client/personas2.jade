@@ -22,7 +22,8 @@ html(lang="es", ng-app="personasApp")
         div.titulo_ficha Persona {{personas.datos.dni}}
         span.campo(ng-repeat="(campo, dato) in personas.datos")
           label(for="campo_{{campo}}") {{campo}}
-          input(id="campo_{{campo}}", ng-model="dato")
+          input(class="campo_{{personas.infoCampos[campo].tipoVisual}}" id="campo_{{campo}}", ng-model="dato", ng-hide="personas.infoCampos[campo].tipoVisual=='check'")
+          input(class="campo_{{personas.infoCampos[campo].tipoVisual}}" type="checkbox" id="campo_{{campo}}", ng-model="dato", ng-show="personas.infoCampos[campo].tipoVisual=='check'")
     script(src="angular.js")
     script(src="angular-route.js")
     script(src="ajax-best-promise.js")

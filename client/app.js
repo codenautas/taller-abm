@@ -11,6 +11,11 @@
         vm.parametros.estado="vacio";
         vm.parametros.dni=71184210;
         vm.datos={};
+        vm.infoCampos={
+            dni:{ tipoVisual:'dni' },
+            seleccionado:{ tipoVisual:'check' },
+            cod_niv_estud:{ tipoVisual:'numerico' },
+        };
         vm.operaciones={
             traerx:function(){
                 vm.parametros.estado="loading";

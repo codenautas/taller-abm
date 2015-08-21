@@ -53,6 +53,10 @@ span.campo label{
     font-size:75%;
 }
 
-#campo_dni{
+.campo_dni{
     width:60px;
+}
+
+.campo_numerico{
+    width:20px;
 }

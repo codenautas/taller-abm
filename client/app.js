@@ -28,6 +28,7 @@
                 }).then(function(result){
                     vm.parametros.estado="ok";
                     vm.datos=JSON.parse(result);
+                    vm.campos=Object.keys(vm.datos);
                 }).catch(function(err){
                     vm.parametros.estado="error";
                     vm.parametros.mensaje_error=err.message;

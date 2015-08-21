@@ -33,3 +33,26 @@ body{
 .contenedor *{
     margin:4px;
 }
+
+.titulo_ficha{
+    font-weight:bold;
+    text-align:center;
+}
+
+span.campo{
+    display:inline-block;
+}
+
+span.campo label{
+    display:block;
+    margin:0px;
+    padding:1px;
+    position:relative;
+    top:2px;
+    background-color:#FEA;
+    font-size:75%;
+}
+
+#campo_dni{
+    width:60px;
+}

@@ -19,8 +19,10 @@ html(lang="es", ng-app="personasApp")
       div(ng-show="personas.parametros.estado=='loading'")
         div Loading...
       div(ng-show="personas.parametros.estado=='ok'")
-        div Persona {{personas.datos.dni}}
-        div Nombre: {{personas.datos.nombre}}
+        div.titulo_ficha Persona {{personas.datos.dni}}
+        span.campo(ng-repeat="(campo, dato) in personas.datos")
+          label(for="campo_{{campo}}") {{campo}}
+          input(id="campo_{{campo}}", ng-model="dato")
     script(src="angular.js")
     script(src="angular-route.js")
     script(src="ajax-best-promise.js")

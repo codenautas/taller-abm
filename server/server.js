@@ -13,6 +13,8 @@ var pg = require('pg-promise-strict');
 var readYaml = require('read-yaml-promise');
 var extensionServeStatic = require('extension-serve-static');
 var jade = require('jade');
+
+var MiniTools = require('mini-tools');
 // var passport = require('passport');
 // var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 // var LocalStrategy = require('passport-local').Strategy;
@@ -44,6 +46,7 @@ function serveJade(pathToFile,anyFile){
 
 // probar con http://localhost:12348/ajax-example
 app.use('/',serveJade('client',true));
+app.use('/',MiniTools.serveStylus('client',true));
 
 function serveHtmlText(htmlText){
     return function(req,res){

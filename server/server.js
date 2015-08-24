@@ -13,6 +13,8 @@ var pg = require('pg-promise-strict');
 var readYaml = require('read-yaml-promise');
 var extensionServeStatic = require('extension-serve-static');
 var jade = require('jade');
+
+var MiniTools = require('mini-tools');
 // var passport = require('passport');
 // var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 // var LocalStrategy = require('passport-local').Strategy;
@@ -21,53 +23,11 @@ var jade = require('jade');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
 
-function serveJade(pathToFile,anyFile){
-    return function(req,res,next){
-        if(path.extname(req.path)){
-            console.log('req.path',req.path);
-            return next();
-        }
-        Promise.resolve().then(function(){
-            var fileName=pathToFile+(anyFile?req.path+'.jade':'');
-            return fs.readFile(fileName, {encoding: 'utf8'})
-        }).catch(function(err){
-            if(anyFile && err.code==='ENOENT'){
-                throw new Error('next');
-            }
-            throw err;
-        }).then(function(fileContent){
-            var htmlText=jade.render(fileContent);
-            serveHtmlText(htmlText)(req,res);
-        }).catch(serveErr(req,res,next));
-    }
-}
-
 // probar con http://localhost:12348/ajax-example
-app.use('/',serveJade('client',true));
+app.use('/',MiniTools.serveJade('client',true));
+app.use('/',MiniTools.serveStylus('client',true));
 
-function serveHtmlText(htmlText){
-    return function(req,res){
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.setHeader('Content-Length', htmlText.length);
-        res.end(htmlText);
-    }
-}
-
-function serveErr(req,res,next){
-    return function(err){
-        if(err.message=='next'){
-            return next();
-        }
-        console.log('ERROR', err);
-        console.log('STACK', err.stack);
-        var text='ERROR! '+(err.code||'')+'\n'+err.message+'\n------------------\n'+err.stack;
-        res.writeHead(200, {
-            'Content-Length': text.length,
-            'Content-Type': 'text/plain; charset=utf-8'
-        });
-        res.end(text);
-    }
-}
+var serveErr = MiniTools.serveErr;
 
 var mime = extensionServeStatic.mime;
 
@@ -266,7 +226,7 @@ Promises.start(function(){
 }).catch(function(err){
     console.log('ERROR',err);
     console.log('STACK',err.stack);
-    console.log('las partes que dependen de la base de datos no fueron instaladas en su totalidad');
+    console.log('quizas las partes que dependen de la base de datos no fueron instaladas en su totalidad');
     console.log('***************');
     console.log('REVISE QUE EXISTA LA DB');
 });

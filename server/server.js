@@ -43,6 +43,7 @@ function serveJade(pathToFile,anyFile){
 }
 
 // probar con http://localhost:12348/ajax-example
+// probar con http://localhost:12348/personas.html
 app.use('/',serveJade('client',true));
 
 function serveHtmlText(htmlText){

@@ -2,185 +2,185 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sistema Central</title>
-<script type="text/javascript" src="personasjs.js"></script>
-<link rel="StyleSheet" href="personascss.css" type="text/css">
+<title></title>
+<script type="text/javascript" src="es6-promise.js"></script>
+<script type="text/javascript" src="ajax-example.js"></script>
+<!-- <link rel="StyleSheet" href="personascss.css" type="text/css"> -->
 </head>
 <body id="body">
-<div id="div1">
-<a href="agregar.html"><img src="img/logo.png" class="logo"></a><br>
-		<div id="div2" ><b>PERSONAS</b></div><br>
-        <div style="text-align:center; margin:-10px 0px 5px 0px">
+	<div id="status"></div>
+	<div id="div1">
+<!-- <a href="agregar.html"><img src="img/logo.png" class="logo"></a><br> -->
+		<div id="div2"><b>PERSONAS</b></div><br>
+        <div>
             <b>DNI</b>
-            <input type="text" id="tra_req" name="tra_req" maxlength="8" size="15" placeholder="Nº de DNI">
-            <input type="button" id="tra_traer" name="tra_traer" value="Traer" onClick="">
-            <img src="img/btn_ppagina.png" alt="p" onClick="">
+            <input type="text" id="dnip" value="16979103"> <!-- name="tra_req" maxlength="8" size="15" placeholder="N° de DNI" -->
+            <button id="traer">Traer persona </button>
+			<button id="primero">Primero</button>
+			<button id="anterior">Anterior</button>
+			<button id="siguiente">Siguiente</button>
+			<button id="ultimo">Ultimo</button>
+			<button id="grabar">Grabar</button>
+<!--        <img src="img/btn_ppagina.png" alt="p" onClick="">
             <img src="img/btn_anterior.png" alt="a" onClick="">
             <img src="img/btn_siguiente.png" alt="s" onClick="">
             <img src="img/btn_upagina.png" alt="u" onClick="">
-            <img src="img/btn_guardar.png" alt="g" onClick="">
+            <img src="img/btn_guardar.png" alt="g" onClick=""> -->
         </div>
 		<table border="1" id="tabla">
 		<tr>
-		<th colspan="3" id="thp">Ficha de la persona</th>
+		<th colspan="3">Ficha de la persona</th>
 		</tr>
 		<tr>
-		<th id="th">Nombre</th><th id="th">DNI</th><th id="th">Telefono</th>
+		<th>Nombre</th><th>DNI</th><th>Telefono</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled value="Franco Grieco"></td>
-		<td><input type="text" name="" id="txt" size="6" disabled value="40015526"></td>
-		<td><input type="text" name="" id="txt" size="15" disabled value="15-5225-6352"></td>
+		<td><input type="text" id="nombre"></td> <!-- disabled value="Franco Grieco" -->
+		<td><input type="text" id="dni"></td><!-- disabled value="40015526" -->
+		<td><input type="text" id="telefono"></td><!-- disabled value="15-5225-7552" -->
 		</tr>
 		<tr>
-		<th id="th">Mail</th><th id="th">Nacimiento</th><th id="th">CUIT</th>
+		<th>Mail</th><th>verif_aux</th><th>fecha_nacim</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled value="21/12/1996"></td>
-		<td><input type="text" name="" id="txt" size="15" disabled value="11-40015526-8"></td>
+		<td><input type="text" id="mail"></td>
+		<td><input type="text" id="verif_aux"></td>
+		<td><input type="text" id="fecha_nacim"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th">Sexo</th><th id="th">Seleccionado</th>
+		<th>Sexo</th><th>estado_de_seleccion</th><th>Seleccionado</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="sexo"></td>
+		<td><input type="text" id="estado_de_seleccion"></td>
+		<td><input type="text" id="seleccionado"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>direccion</th><th>barrio</th><th>cuit_l</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="direccion"></td>
+		<td><input type="text" id="barrio"></td>
+		<td><input type="text" id="cuit_l"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>cod_niv_estud</th><th>cod_area_estud</th><th>cuit_l_verif</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="cod_niv_estud"></td>
+		<td><input type="text" id="cod_area_estud"></td>
+		<td><input type="text" id="cuit_l_verif"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>estudios</th><th>orien_secundario</th><th>fecha_rec_cv</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="estudios"></td>
+		<td><input type="text" id="orien_secundario"></td>
+		<td><input type="text" id="fecha_rec_cv"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>cod_exper_e</th><th>cod_exper_r</th><th>cod_exper_sup</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="cod_exper_e"></td>
+		<td><input type="text" id="cod_exper_r"></td>
+		<td><input type="text" id="cod_exper_sup"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>cod_exper_i</th><th>cod_exper_in</th><th>tipo_experiencia</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="cod_exper_i"></td>
+		<td><input type="text" id="cod_exper_in"></td>
+		<td><input type="text" id="tipo_experiencia"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>fecha_ult_cv</th><th>cod_tipo_operativo</th><th>referente</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="fecha_ult_cv"></td>
+		<td><input type="text" id="cod_tipo_operativo"></td>
+		<td><input type="text" id="referente"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>procedencia</th><th>observaciones</th><th>se_postula_para</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="procedencia"></td>
+		<td><input type="text" id="observaciones"></td>
+		<td><input type="text" id="se_postula_para"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>llamar</th><th>fecha_llamada</th><th>cod_resul_llamada</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="llamar"></td>
+		<td><input type="text" id="fecha_llamada"></td>
+		<td><input type="text" id="cod_resul_llamada"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>comentarios_llam</th><th>fe_entrev</th><th>hora_entrev</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="comentarios_llam"></td>
+		<td><input type="text" id="fe_entrev"></td>
+		<td><input type="text" id="hora_entrev"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>fecha_hora_entrev</th><th>cod_entrevistador</th><th>result_entrevista</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="fecha_hora_entrev"></td>
+		<td><input type="text" id="cod_entrevistador"></td>
+		<td><input type="text" id="result_entrevista"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>cod_entr_perfil</th><th>cod_puesto_recom</th><th>cod_puesto_alter</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="cod_entr_perfil"></td>
+		<td><input type="text" id="cod_puesto_recom"></td>
+		<td><input type="text" id="cod_puesto_alter"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>comentarios_entrev</th><th>otro_entrev</th><th>result_ot_entr</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="comentarios_entrev"></td>
+		<td><input type="text" id="otro_entrev"></td>
+		<td><input type="text" id="result_ot_entr"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>otros_comentarios</th><th>cod_ult_situacion</th><th>ubicacion_dgeyc</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="otros_comentarios"></td>
+		<td><input type="text" id="cod_ult_situacion"></td>
+		<td><input type="text" id="ubicacion_dgeyc"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>no</th><th>fecha_ing</th><th>tipo_contrato</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="no"></td>
+		<td><input type="text" id="fecha_ing"></td>
+		<td><input type="text" id="tipo_contrato"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>f48</th><th>formulario</th><th>log</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
+		<td><input type="text" id="f48"></td>
+		<td><input type="text" id="formulario"></td>
+		<td><input type="text" id="log"></td>
 		</tr>
 		<tr>
-		<th id="th"></th><th id="th"></th><th id="th"></th>
+		<th>seleccion</th><th>procencia</th>
 		</tr>
 		<tr>
-		<td><input type="text" name="" id="txt" disabled></td>
-		<td><input type="text" name="" id="txt" size="6" disabled></td>
-		<td><input type="text" name="" id="txt" size="15" disabled></td>
-		</tr>
-		<tr>
-		<th style="text-align:left">Se postula para</th>
-		</tr>
-		<tr>
-		<td colspan="4"><textarea cols="60" rows="10" disabled style="background-color:white"></textarea></td>
+		<td><input type="text" id="seleccion"></td>
+		<td><input type="text" id="procencia"></td>
 		</tr>
 		</table>
 </div>

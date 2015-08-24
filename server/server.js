@@ -1,4 +1,9 @@
 "use strict";
+/*jshint eqnull:true */
+/*jshint globalstrict:true */
+/*jshint node:true */
+
+// APP
 
 var _ = require('lodash');
 var express = require('express');
@@ -8,7 +13,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var Promises = require('best-promise');
 var fs = require('fs-promise');
-var path = require('path');
 var pg = require('pg-promise-strict');
 var readYaml = require('read-yaml-promise');
 var extensionServeStatic = require('extension-serve-static');
@@ -45,7 +49,7 @@ app.use('/',extensionServeStatic('./client', {
     index: ['index.html'], 
     extensions:[''], 
     staticExtensions:validExts
-}))
+}));
 
 var actualConfig;
 
@@ -56,13 +60,15 @@ Promises.start(function(){
 }).then(function(globalConfig){
     actualConfig=globalConfig;
     return readYaml('local-config.yaml',{encoding: 'utf8'}).catch(function(err){
-        if(err.code!=='ENOENT') throw err;
+        if(err.code!=='ENOENT'){
+            throw err;
+        }
         return {};
     }).then(function(localConfig){
         _.merge(actualConfig,localConfig);
     });
 }).then(function(){
-    return new Promise(function(resolve, reject){
+    return new Promises.Promise(function(resolve, reject){
         var server=app.listen(actualConfig.server.port, function(event) {
             console.log('Listening on port %d', server.address().port);
             resolve();
@@ -90,10 +96,11 @@ Promises.start(function(){
 }).then(function(){
     //ejemplo suma
     app.use('/ejemplo/suma',function(req,res){
+        var params;
         if(req.method==='POST'){
-            var params=req.body;
+            params=req.body;
         }else{
-            var params=req.query;
+            params=req.query;
         }
         // probar con localhost:12348/ejemplo/suma?alfa=3&beta=7
         clientDb.query('select $1::integer + $2::integer as suma',[params.alfa||1,params.beta||10]).fetchUniqueRow().then(function(result){

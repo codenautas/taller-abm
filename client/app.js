@@ -4,7 +4,7 @@
 
     var app = angular.module("personasApp",[]);
     
-    app.controller("PersonasCtrl",function($scope){
+    app.controller("PersonasCtrl",function($http, $scope){
         var vm=this;
         vm.vacio=true;
         vm.parametros={};
@@ -32,6 +32,7 @@
                     parametrosLlamada.data.dni = vm.parametros.dni;
                 }
                 AjaxBestPromise.get(parametrosLlamada).then(function(result){
+                // $http.get(parametrosLlamada).then(function(result){
                     vm.parametros.estado="ok";
                     vm.datos=JSON.parse(result);
                     vm.campos=Object.keys(vm.datos);
@@ -41,25 +42,10 @@
                 }).then(function(){
                     $scope.$apply();
                 });
+            },
+            refrescar:function(){
+                setTimeout(function(){ $scope.$apply();} ,100);
             }
-            /*traer:function(){
-                vm.parametros.estado="loading";
-                
-                AjaxBestPromise.get({
-                    url:'/persona/load',
-                    data:{dni: vm.parametros.dni}
-                }).then(
-                    function(result){
-                    vm.parametros.estado="ok";
-                    vm.datos=JSON.parse(result);
-                    vm.campos=Object.keys(vm.datos);
-                }).catch(function(err){
-                    vm.parametros.estado="error";
-                    vm.parametros.mensaje_error=err.message;
-                }).then(function(){
-                    $scope.$apply();
-                });
-            }*/
         }
     });
 
@@ -73,21 +59,4 @@
             vm.object=JSON.stringify(err);
         });
     });
-    /*function consulta(operacion){
-        vm.parametros.estado="loading";
-        AjaxBestPromise.get({
-            url:'/persona/'+operacion,
-            data:{dni: vm.parametros.dni}
-        }).then(
-            function(result){
-            vm.parametros.estado="ok";
-            vm.datos=JSON.parse(result);
-            vm.campos=Object.keys(vm.datos);
-        }).catch(function(err){
-            vm.parametros.estado="error";
-            vm.parametros.mensaje_error=err.message;
-        }).then(function(){
-            $scope.$apply();
-        });
-    }*/
 })();

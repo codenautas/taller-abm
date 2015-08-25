@@ -21,11 +21,14 @@ html(lang="es", ng-app="personasApp")
       div(ng-show="personas.parametros.estado=='loading'")
         div Loading...
       div(ng-show="personas.parametros.estado=='ok'")
-        div.titulo_ficha Persona {{personas.datos.dni}}
+        div.titulo_ficha 
+          span Persona {{personas.datos.dni}} 
+          button(ng-click="personas.operaciones.refrescar()") refrescar
         span.campo(ng-repeat="(campo, dato) in personas.datos")
           label(for="campo_{{campo}}") {{campo}}
-          input(class="campo_{{personas.infoCampos[campo].tipoVisual}}" id="campo_{{campo}}", ng-model="dato", ng-hide="personas.infoCampos[campo].tipoVisual=='check'")
+          input(class="campo_{{personas.infoCampos[campo].tipoVisual}}" id="campo_{{campo}}", ng-model="personas.datos[campo]", ng-hide="personas.infoCampos[campo].tipoVisual=='check'")
           input(class="campo_{{personas.infoCampos[campo].tipoVisual}}" type="checkbox" id="campo_{{campo}}", ng-model="dato", ng-show="personas.infoCampos[campo].tipoVisual=='check'")
+      div {{personas.datos}}
     script(src="angular.js")
     script(src="angular-route.js")
     script(src="ajax-best-promise.js")

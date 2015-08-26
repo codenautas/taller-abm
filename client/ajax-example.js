@@ -215,7 +215,7 @@ window.addEventListener('load',function(){
         // this.disabled = true;
         // AjaxBestPromise.get({
             // url:'/persona/grabar',
-            // data:{dni:eid('dni').value},
+            // data:{dni:eid('dnip').value},
         // }).then(function(resultado){
             // if(!resultado){
                 // alert('El registro ha sido grabado');
@@ -225,5 +225,5 @@ window.addEventListener('load',function(){
         // }).catch(function(error){
             // eid('status').textContent=''+error;
         // });
-    }    
+    // }      
 });

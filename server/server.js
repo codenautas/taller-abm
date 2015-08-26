@@ -1,9 +1,4 @@
 "use strict";
-/*jshint eqnull:true */
-/*jshint globalstrict:true */
-/*jshint node:true */
-
-// APP
 
 var _ = require('lodash');
 var express = require('express');
@@ -13,12 +8,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var Promises = require('best-promise');
 var fs = require('fs-promise');
+var path = require('path');
 var pg = require('pg-promise-strict');
 var readYaml = require('read-yaml-promise');
 var extensionServeStatic = require('extension-serve-static');
 var jade = require('jade');
-
-var MiniTools = require('mini-tools');
 // var passport = require('passport');
 // var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 // var LocalStrategy = require('passport-local').Strategy;
@@ -27,18 +21,56 @@ var MiniTools = require('mini-tools');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
 
-// probar con http://localhost:12348/ajax-example
-app.use('/',MiniTools.serveJade('client',true));
-app.use('/',MiniTools.serveStylus('client',true));
+function serveJade(pathToFile,anyFile){
+    return function(req,res,next){
+        if(path.extname(req.path)){
+            console.log('req.path',req.path);
+            return next();
+        }
+        Promise.resolve().then(function(){
+            var fileName=pathToFile+(anyFile?req.path+'.jade':'');
+            return fs.readFile(fileName, {encoding: 'utf8'})
+        }).catch(function(err){
+            if(anyFile && err.code==='ENOENT'){
+                throw new Error('next');
+            }
+            throw err;
+        }).then(function(fileContent){
+            var htmlText=jade.render(fileContent);
+            serveHtmlText(htmlText)(req,res);
+        }).catch(serveErr(req,res,next));
+    }
+}
 
-var serveErr = MiniTools.serveErr;
+// probar con http://localhost:12348/ajax-example
+// probar con http://localhost:12348/personas.html
+app.use('/',serveJade('client',true));
+
+function serveHtmlText(htmlText){
+    return function(req,res){
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Length', htmlText.length);
+        res.end(htmlText);
+    }
+}
+
+function serveErr(req,res,next){
+    return function(err){
+        if(err.message=='next'){
+            return next();
+        }
+        console.log('ERROR', err);
+        console.log('STACK', err.stack);
+        var text='ERROR! '+(err.code||'')+'\n'+err.message+'\n------------------\n'+err.stack;
+        res.writeHead(200, {
+            'Content-Length': text.length,
+            'Content-Type': 'text/plain; charset=utf-8'
+        });
+        res.end(text);
+    }
+}
 
 var mime = extensionServeStatic.mime;
-
-app.use('/',extensionServeStatic('./node_modules/angular', {staticExtensions:'js'}));
-app.use('/',extensionServeStatic('./node_modules/angular-route', {staticExtensions:'js'}));
-app.use('/',extensionServeStatic('./node_modules/ajax-best-promise/bin', {staticExtensions:'js'}));
-
 
 var validExts=[
     'html',
@@ -49,7 +81,7 @@ app.use('/',extensionServeStatic('./client', {
     index: ['index.html'], 
     extensions:[''], 
     staticExtensions:validExts
-}));
+}))
 
 var actualConfig;
 
@@ -60,15 +92,13 @@ Promises.start(function(){
 }).then(function(globalConfig){
     actualConfig=globalConfig;
     return readYaml('local-config.yaml',{encoding: 'utf8'}).catch(function(err){
-        if(err.code!=='ENOENT'){
-            throw err;
-        }
+        if(err.code!=='ENOENT') throw err;
         return {};
     }).then(function(localConfig){
         _.merge(actualConfig,localConfig);
     });
 }).then(function(){
-    return new Promises.Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject){
         var server=app.listen(actualConfig.server.port, function(event) {
             console.log('Listening on port %d', server.address().port);
             resolve();
@@ -94,36 +124,32 @@ Promises.start(function(){
     ));
     */
 }).then(function(){
-    //ejemplo suma
     app.use('/ejemplo/suma',function(req,res){
-        var params;
         if(req.method==='POST'){
-            params=req.body;
+            var params=req.body;
         }else{
-            params=req.query;
+            var params=req.query;
         }
         // probar con localhost:12348/ejemplo/suma?alfa=3&beta=7
         clientDb.query('select $1::integer + $2::integer as suma',[params.alfa||1,params.beta||10]).fetchUniqueRow().then(function(result){
             if(req.method==='POST'){
-                //res.send(''+result.rows[0].suma);
-                res.send(''+result.row.suma);
+                res.send(''+result.rows[0].suma);
             }else{
-                //res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
-                res.send('<h1>la suma es '+result.row.suma+'<h1>');
+                res.send('<h1>la suma es '+result.rows[0].suma+'<h1>');
             }
         }).catch(function(err){
             console.log('err ejemplo/suma',err);
             throw err;
         }).catch(serveErr);
     });
-	//personas
     app.get('/persona/load',function(req,res){
         var params=req.query;
         // probar con localhost:12348/persona/load?dni=71184210
         clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err persona/load',err);            
+            console.log('err ejemplo/load',err);
+            
             throw err;
         }).catch(serveErr);
     });
@@ -133,7 +159,8 @@ Promises.start(function(){
         clientDb.query('select * from reqper.personas where dni > $1 order by dni limit 1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err persona/siguiente',err);            
+            console.log('err ejemplo/siguiente',err);
+            
             throw err;
         }).catch(serveErr);
     });    
@@ -143,7 +170,8 @@ Promises.start(function(){
         clientDb.query('select * from reqper.personas where dni < $1 order by dni desc limit 1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err persona/anterior',err);           
+            console.log('err ejemplo/anterior',err);
+            
             throw err;
         }).catch(serveErr);
     });    
@@ -153,87 +181,37 @@ Promises.start(function(){
         clientDb.query('select * from reqper.personas order by dni limit 1',null).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err persona/primero',err);            
+            console.log('err ejemplo/primero',err);
+            
             throw err;
         }).catch(serveErr);
     });    
     app.get('/persona/ultimo',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/persona/ultimo
+        // probar con localhost:12348/persona/primero
         clientDb.query('select * from reqper.personas order by dni desc limit 1',null).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err persona/ultimo',err);            
+            console.log('err ejemplo/ultimo',err);
+            
             throw err;
         }).catch(serveErr);
     });
-	/*
     app.get('/persona/grabar',function(req,res){
         var params=req.query;
-        // probar con localhost:12348/persona/grabar
+        // probar con localhost:12348/ejemplo/resta?alfa=19&beta=7
         clientDb.query('select * from reqper.personas where dni = $1',[params.dni]).fetchOneRowIfExists().then(function(result){
             res.send(JSON.stringify(result.row));
         }).catch(function(err){
-            console.log('err persona/grabar',err);            
+            console.log('err ejemplo/grabar',err);
+            
             throw err;
         }).catch(serveErr);
-    });
-	*/
-    //requerimientos
-    app.get('/requerimiento/load',function(req,res){
-        var params=req.query;
-        // probar con localhost:12348/requerimiento/load?req_proy=NUEVOPROY&req_req=8
-        clientDb.query('select * from reqper.requerimientos where req_proy = $1 and req_req= $2',[params.req_proy,params.req_req]).fetchOneRowIfExists().then(function(result){
-            res.send(JSON.stringify(result.row));
-        }).catch(function(err){
-            console.log('err requerimiento/load',err);            
-            throw err;
-        }).catch(serveErr);
-    });	
-    app.get('/requerimiento/siguiente',function(req,res){
-        var params=req.query;
-        // probar con localhost:12348/requerimiento/siguiente?req_proy=NUEVOPROY&req_req=8
-        clientDb.query('select * from reqper.requerimientos where req_proy > $1 or (req_proy = $1 and comun.para_ordenar_numeros(req_req) > comun.para_ordenar_numeros($2)) order by req_proy, comun.para_ordenar_numeros(req_req) LIMIT 1',[params.req_proy,params.req_req]).fetchOneRowIfExists().then(function(result){
-  			res.send(JSON.stringify(result.row));
-        }).catch(function(err){
-            console.log('err requerimiento/siguiente',err);            
-            throw err;
-        }).catch(serveErr);
-    });
-    app.get('/requerimiento/anterior',function(req,res){
-        var params=req.query;
-        // probar con localhost:12348/requerimiento/anterior?req_proy=NUEVOPROY&req_req=8
-        clientDb.query('select * from reqper.requerimientos where req_proy < $1 or (req_proy = $1 and comun.para_ordenar_numeros(req_req) < comun.para_ordenar_numeros($2)) order by (req_proy, comun.para_ordenar_numeros(req_req)) desc LIMIT 1',[params.req_proy,params.req_req]).fetchOneRowIfExists().then(function(result){
-            res.send(JSON.stringify(result.row));
-        }).catch(function(err){
-            console.log('err requerimiento/anterior',err);            
-            throw err;
-        }).catch(serveErr);
-    });    
-    app.get('/requerimiento/primero',function(req,res){
-        var params=req.query;
-        // probar con localhost:12348/requerimiento/primero
-        clientDb.query('select * from reqper.requerimientos order by req_proy, comun.para_ordenar_numeros(req_req) limit 1',null).fetchOneRowIfExists().then(function(result){
-            res.send(JSON.stringify(result.row));
-        }).catch(function(err){
-            console.log('err requerimiento/primero',err);            
-            throw err;
-        }).catch(serveErr);
-    });        
-    app.get('/requerimiento/ultimo',function(req,res){
-        var params=req.query;
-        // probar con localhost:12348/requerimiento/ultimo
-        clientDb.query('select * from reqper.requerimientos order by (req_proy, comun.para_ordenar_numeros(req_req)) desc limit 1',null).fetchOneRowIfExists().then(function(result){
-            res.send(JSON.stringify(result.row));
-        }).catch(function(err){
-            console.log('err requerimiento/ultimo',err);            
-            throw err;
-        }).catch(serveErr);
-    });	
+    });     
 }).catch(function(err){
     console.log('ERROR',err);
     console.log('STACK',err.stack);
-    console.log('quizas las partes que dependen de la base de datos no fueron instaladas en su totalidad');
+    console.log('las partes que dependen de la base de datos no fueron instaladas en su totalidad');
     console.log('***************');
     console.log('REVISE QUE EXISTA LA DB');
 });

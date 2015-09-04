@@ -13,7 +13,7 @@
         vm.datos={};
         vm.infoCampos={
             dni:{ tipoVisual:'dni' },
-            seleccionado:{ tipoVisual:'check' },
+            // seleccionado:{ tipoVisual:'check' },
             cod_niv_estud:{ tipoVisual:'numerico' },
         };
         vm.operaciones={
@@ -35,6 +35,7 @@
                 // $http.get(parametrosLlamada).then(function(result){
                     vm.parametros.estado="ok";
                     vm.datos=JSON.parse(result);
+                    vm.parametros.dni="";
                     vm.campos=Object.keys(vm.datos);
                 }).catch(function(err){
                     vm.parametros.estado="error";

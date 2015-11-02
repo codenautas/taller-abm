@@ -19,9 +19,9 @@ var extensionServeStatic = require('extension-serve-static');
 var jade = require('jade');
 
 var MiniTools = require('mini-tools');
-var passport = require('passport');
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
-var LocalStrategy = require('passport-local').Strategy;
+
+var loginPlus = require('login-plus');
+
 var crypto = require('crypto');
 
 function md5(text){
@@ -31,43 +31,20 @@ function md5(text){
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
 
+loginPlus.init(app,{unloggedPath:'client2/unlogged', loginPagePath:'client2/login'});
+
 var validExts=[
     'html',
     'jpg','png','gif',
     'css','js','manifest'];
 
-app.use('/unlogged',extensionServeStatic('./client2/unlogged', {
-    index: [''], 
-    extensions:[''], 
-    staticExtensions:validExts
-}));
+// app.use('/unlogged',extensionServeStatic('./client2/unlogged', {
+//     index: [''], 
+//     extensions:[''], 
+//     staticExtensions:validExts
+// }));
 
 app.use(session({ secret: 'keyboard cat', resave:false, saveUninitialized:true }));
-app.use(passport.initialize());
-app.use(passport.session({ secret: 'keyboard cat' }));
-
-app.get('/login',MiniTools.serveJade("client2/login",false));
-
-app.post('/login',
-  passport.authenticate('local', { successRedirect: './index',
-                                   failureRedirect: './login',
-                                   failureFlash: true })
-);
-
-var savedUser={};
-
-passport.serializeUser(function(user, done) {
-    savedUser[user.username] = user;
-    console.log('SERIALIZE',savedUser,user);
-    done(null, user.username);
-});
-
-passport.deserializeUser(function(username, done) {
-    console.log('deSERIALIZE',savedUser,username);
-    done(null, savedUser[username]);
-});
-
-app.use(ensureLoggedIn('./login'));
 
 // probar con http://localhost:12348/ajax-example
 app.use('/',MiniTools.serveJade('client2',true));
@@ -113,28 +90,26 @@ Promises.start(function(){
 }).then(function(client){
     console.log("CONECTED TO", actualConfig.db.database);
     clientDb=client;
-    passport.use(new LocalStrategy(
-        function(username, password, done) {
-            console.log('intento de entrar de ',username,password);
-            clientDb.query(
-                'SELECT usuario as username FROM reqper.usuarios WHERE usuario=$1 AND clavemd5=$2',
-                [username, md5(password+username.toLowerCase())]
-            ).fetchUniqueRow().then(function(data){
-                console.log('datos traidos',data.row);
-                done(null, data.row);
-            }).catch(function(err){
-                console.log('err',err);
-                if(err.code==='54011!'){
-                    done('Error en usuario o clave');
-                }else{
-                    throw err;
-                }
-            }).catch(function(err){
-                console.log('error logueando',err);
-                console.log('stack',err.stack);
-            }).catch(done);
-        }
-    ));
+	loginPlus.setValidator(function(username, password, done) {
+		console.log('intento de entrar de ',username,password);
+		clientDb.query(
+			'SELECT usuario as username FROM reqper.usuarios WHERE usuario=$1 AND clavemd5=$2',
+			[username, md5(password+username.toLowerCase())]
+		).fetchUniqueRow().then(function(data){
+			console.log('datos traidos',data.row);
+			done(null, data.row);
+		}).catch(function(err){
+			console.log('err',err);
+			if(err.code==='54011!'){
+				done('Error en usuario o clave');
+			}else{
+				throw err;
+			}
+		}).catch(function(err){
+			console.log('error logueando',err);
+			console.log('stack',err.stack);
+		}).catch(done);
+	});
 }).then(function(){
     //ejemplo suma
     app.use('/ejemplo/suma',function(req,res){
